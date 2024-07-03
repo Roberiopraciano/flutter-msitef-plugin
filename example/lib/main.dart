@@ -72,7 +72,8 @@ class _MyAppState extends State<MyApp> {
           return Future.value();
         },
         callbackFail: (MSitefResponseFail response) {
-          print("Resultado m-SiTef FAIL: ${response.codresp}");
+          print(
+              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ");
           // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
           return Future.value();
         },
