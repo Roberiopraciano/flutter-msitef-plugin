@@ -126,19 +126,11 @@ class MethodChannelFlutterMsitefPlugin extends FlutterMsitefPluginPlatform {
   }
 
   void setMsitefResultHandler() {
-    print('setMsitefResultHandler called');
-
     _methodChannel.setMethodCallHandler((MethodCall call) async {
       if (call.method == "onMsitefResult") {
-        print('onMsitefResult called');
-
         final status = Map<String, dynamic>.from(call.arguments)['STATUS'];
 
-        print(status);
-
         if (status == 'RESULT_OK') {
-          print('RESULT_OK');
-
           final response =
               MSitefResponse.fromMap(Map<String, dynamic>.from(call.arguments));
 
@@ -146,8 +138,6 @@ class MethodChannelFlutterMsitefPlugin extends FlutterMsitefPluginPlatform {
             await _callback!(response);
           }
         } else {
-          print('RESULT_CANCELED/OTHERS');
-
           final response = MSitefResponseFail.fromMap(
               Map<String, dynamic>.from(call.arguments));
 

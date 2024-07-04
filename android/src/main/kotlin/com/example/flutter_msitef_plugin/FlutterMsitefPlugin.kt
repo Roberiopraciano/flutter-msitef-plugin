@@ -262,7 +262,7 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         intent.putExtra("operador", call.argument<String>("operador"))      
         intent.putExtra("numeroCupom", call.argument<String>("numeroCupom"))      
         intent.putExtra("valor", call.argument<String>("valor"))
-
+        tipoPinpad
         if (tipoProcessamento == TipoProcessamento.OUTROS) { 
           Log.d("KOTLIN", "getIntent: OUTROS")
           intent.putExtra("modalidade", "0")

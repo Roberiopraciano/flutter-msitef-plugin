@@ -30,6 +30,9 @@ class _IntentFormState extends State<IntentForm> {
   final _flutterMsitefPlugin = FlutterMsitefPlugin();
   final _formKey = GlobalKey<FormState>();
 
+  String tipoPinpad = "";
+  String tipoParcelamento = "NENHUM";
+
   final Map<String, TextEditingController> controllers = {
     "empresaSitef": TextEditingController(text: "00000000"),
     "enderecoSitef": TextEditingController(text: "192.168.1.100"),
@@ -38,205 +41,121 @@ class _IntentFormState extends State<IntentForm> {
     "comExterna": TextEditingController(text: "0"),
     "otp": TextEditingController(text: ""),
     "tokenRegistroTls": TextEditingController(text: ""),
-    "tipoPinpad": TextEditingController(text: ""),
     "operador": TextEditingController(text: "0001"),
     "numeroCupom": TextEditingController(text: "1"),
     "valor": TextEditingController(text: "9000"),
-    "tipoParcelamento": TextEditingController(text: "NENHUM"),
     "numParcelas": TextEditingController(text: "1"),
     "timeoutColeta": TextEditingController(text: "30"),
   };
 
   Map<String, String> getFormValues() {
-    return controllers.map((key, controller) => MapEntry(key, controller.text));
+    final formValues =
+        controllers.map((key, controller) => MapEntry(key, controller.text));
+    formValues['tipoPinpad'] = tipoPinpad;
+    formValues['tipoParcelamento'] = tipoParcelamento;
+    return formValues;
+  }
+
+  Future<void> msitefSuccess(MSitefResponse response) {
+    final String message = 'CODRESP: ${response.codresp} \n\n'
+        'CODTRANS: ${response.codtrans} \n\n'
+        'TIPO_PARC: ${response.tipoParc} \n\n'
+        'REDE_AUT: ${response.redeAut} \n\n'
+        'BANDEIRA: ${response.bandeira} \n\n'
+        'NSU_SITEF: ${response.nsuSitef} \n\n'
+        'NSU_HOST: ${response.nsuHost} \n\n'
+        'NUM_PARC: ${response.numParc}';
+
+    showToast("SUCCESS", message);
+
+    return Future.value();
+  }
+
+  Future<void> msitefFail(MSitefResponseFail response) {
+    final message =
+        "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
+    showToast('ERROR', message);
+
+    return Future.value();
   }
 
   void msitefAdm() async {
-    try {
-      final formData = getFormValues();
-      print("msitefAdm called with data: $formData");
-
-      await _flutterMsitefPlugin.msitefAdm(
-        params: formData,
-        callback: (MSitefResponse response) {
-          print("Resultado m-SiTef SUCCESS: $response");
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          return Future.value();
-        },
-        callbackFail: (MSitefResponseFail response) {
-          final message =
-              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
-          print(message);
-
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          showToast(message);
-
-          return Future.value();
-        },
-      );
-
-      // Perform necessary actions with the form data
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Erro ao executar msitefAdm: $e",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-    }
+    final formData = getFormValues();
+    await _flutterMsitefPlugin.msitefAdm(
+      params: formData,
+      callback: msitefSuccess,
+      callbackFail: msitefFail,
+    );
   }
 
   void msitefVendaCredito() async {
-    try {
-      final formData = getFormValues();
-      print("msitefCredito called with data: $formData");
-
-      await _flutterMsitefPlugin.msitefCredito(
-        params: formData,
-        callback: (MSitefResponse response) {
-          print("Resultado m-SiTef SUCCESS: $response");
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          return Future.value();
-        },
-        callbackFail: (MSitefResponseFail response) {
-          final message =
-              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
-          print(message);
-
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          showToast(message);
-
-          return Future.value();
-        },
-      );
-
-      // Perform necessary actions with the form data
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Erro ao executar msitefCredito: $e",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-    }
+    final formData = getFormValues();
+    await _flutterMsitefPlugin.msitefCredito(
+      params: formData,
+      callback: msitefSuccess,
+      callbackFail: msitefFail,
+    );
   }
 
   void msitefVendaDebito() async {
-    try {
-      final formData = getFormValues();
-      print("msitefCredito called with data: $formData");
-
-      await _flutterMsitefPlugin.msitefDebito(
-        params: formData,
-        callback: (MSitefResponse response) {
-          print("Resultado m-SiTef SUCCESS: $response");
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          return Future.value();
-        },
-        callbackFail: (MSitefResponseFail response) {
-          final message =
-              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
-          print(message);
-
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          showToast(message);
-
-          return Future.value();
-        },
-      );
-
-      // Perform necessary actions with the form data
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Erro ao executar msitefDebito: $e",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-    }
+    final formData = getFormValues();
+    await _flutterMsitefPlugin.msitefDebito(
+      params: formData,
+      callback: msitefSuccess,
+      callbackFail: msitefFail,
+    );
   }
 
   void msitefPix() async {
-    try {
-      final formData = getFormValues();
-      print("msitefCredito called with data: $formData");
-
-      await _flutterMsitefPlugin.msitefPix(
-        params: formData,
-        callback: (MSitefResponse response) {
-          print("Resultado m-SiTef SUCCESS: $response");
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          return Future.value();
-        },
-        callbackFail: (MSitefResponseFail response) {
-          final message =
-              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
-          print(message);
-
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          showToast(message);
-
-          return Future.value();
-        },
-      );
-
-      // Perform necessary actions with the form data
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Erro ao executar msitefPix: $e",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-    }
+    final formData = getFormValues();
+    await _flutterMsitefPlugin.msitefPix(
+      params: formData,
+      callback: msitefSuccess,
+      callbackFail: msitefFail,
+    );
   }
 
   void msitefCancel() async {
+    final formData = getFormValues();
+    await _flutterMsitefPlugin.msitefCancelamento(
+      params: formData,
+      callback: msitefSuccess,
+      callbackFail: msitefFail,
+    );
+  }
+
+  void executeWithExceptionHandling(Function action) {
     try {
-      final formData = getFormValues();
-      print("msitefCredito called with data: $formData");
-
-      await _flutterMsitefPlugin.msitefCancelamento(
-        params: formData,
-        callback: (MSitefResponse response) {
-          print("Resultado m-SiTef SUCCESS: $response");
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          return Future.value();
-        },
-        callbackFail: (MSitefResponseFail response) {
-          final message =
-              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
-          print(message);
-
-          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
-          showToast(message);
-
-          return Future.value();
-        },
-      );
-
-      // Perform necessary actions with the form data
+      action();
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Erro ao executar msitefCancelamento: $e",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      showToast('ERROR', '$e');
     }
   }
 
-  void showToast(String message) {
+  void showToast(String tipo, String message) {
+    Color backgroundColor;
+    ToastGravity gravity;
+
+    switch (tipo) {
+      case 'SUCCESS':
+        backgroundColor = Colors.green;
+        gravity = ToastGravity.CENTER;
+        break;
+      case 'ERROR':
+        backgroundColor = Colors.red;
+        gravity = ToastGravity.BOTTOM;
+        break;
+      default:
+        backgroundColor =
+            Colors.grey; // Default color if 'tipo' is not recognized
+        gravity = ToastGravity.TOP;
+    }
+
     Fluttertoast.showToast(
       msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.red,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: gravity,
+      backgroundColor: backgroundColor,
       textColor: Colors.white,
     );
   }
@@ -245,7 +164,7 @@ class _IntentFormState extends State<IntentForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Intent Form'),
+        title: const Text('mSitef: demo'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -260,25 +179,58 @@ class _IntentFormState extends State<IntentForm> {
                     decoration: InputDecoration(labelText: entry.key),
                   );
                 }),
+                DropdownButtonFormField<String>(
+                  value: tipoPinpad,
+                  decoration: const InputDecoration(labelText: "tipoPinpad"),
+                  items: ["", "ANDROID_USB", "ANDROID_BT"].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      tipoPinpad = newValue!;
+                    });
+                  },
+                ),
+                DropdownButtonFormField<String>(
+                  value: tipoParcelamento,
+                  decoration:
+                      const InputDecoration(labelText: "tipoParcelamento"),
+                  items: ["NENHUM", "LOJA", "ADM"].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      tipoParcelamento = newValue!;
+                    });
+                  },
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: msitefAdm,
+                  onPressed: () => executeWithExceptionHandling(msitefAdm),
                   child: const Text('ADM'),
                 ),
                 ElevatedButton(
-                  onPressed: msitefVendaCredito,
+                  onPressed: () =>
+                      executeWithExceptionHandling(msitefVendaCredito),
                   child: const Text('VendaCredito'),
                 ),
                 ElevatedButton(
-                  onPressed: msitefVendaDebito,
+                  onPressed: () =>
+                      executeWithExceptionHandling(msitefVendaDebito),
                   child: const Text('VendaDebito'),
                 ),
                 ElevatedButton(
-                  onPressed: msitefPix,
+                  onPressed: () => executeWithExceptionHandling(msitefPix),
                   child: const Text('Pix'),
                 ),
                 ElevatedButton(
-                  onPressed: msitefCancel,
+                  onPressed: () => executeWithExceptionHandling(msitefCancel),
                   child: const Text('Cancelamento'),
                 ),
               ],
