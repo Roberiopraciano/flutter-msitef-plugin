@@ -13,11 +13,22 @@ import io.flutter.plugin.common.MethodChannel.Result
 import org.json.JSONObject
 import android.util.Log
 
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+
 enum class TipoProcessamento {
   OUTROS,
   CREDITO,
   DEBITO,
   PIX,
+  CARTEIRA_DIGITAL,
+  ADM
+}
+
+enum class TipoParcelamento {
+  NENHUM,
+  LOJA,
   ADM
 }
 
@@ -165,45 +176,83 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   }
 
 
-  private fun getIntent(tipoProcessamento: TipoProcessamento, call: MethodCall): Intent? {
+  private fun getIntent(tipoProcessamento: TipoProcessamento, call: MethodCall): Intent? {    
+
     val intent = Intent(REQUEST_URL_MSITEF)
+    val otp: String? = call.argument<String>("otp")
+    val tokenRegistroTls: String? = call.argument<String>("tokenRegistroTls")
+    val tipoParcelamento: TipoParcelamento? = call.argument<TipoParcelamento>("tipoParcelamento")
+    val tipoPinpad: String? = call.argument<String>("tipoPinpad")
     
     intent.putExtra("empresaSitef", call.argument<String>("empresaSitef"))
     intent.putExtra("enderecoSitef", call.argument<String>("enderecoSitef"))
     intent.putExtra("CNPJ_CPF", call.argument<String>("CNPJ_CPF"))
+    intent.putExtra("cnpj_automacao", call.argument<String>("cnpj_automacao"))
+    
+    intent.putExtra("isDoubleValidation", "0")
+    intent.putExtra("caminhoCertificadoCA", "ca_cert_perm")
     intent.putExtra("comExterna", call.argument<String>("comExterna"))
-    // intent.putExtra("timeoutColeta", "30")
-    // intent.putExtra("tipoPinpad", "ANDROID_USB")
-        
+    intent.putExtra("timeoutColeta", call.argument<String>("timeoutColeta"))
+    
+    if ( !otp.isNullOrBlank() ){
+      intent.putExtra("otp", otp)
+    }
+
+    if ( !tokenRegistroTls.isNullOrBlank() ){
+      intent.putExtra("tokenRegistroTls", tokenRegistroTls)
+    }
+
+    if ( !tipoPinpad.isNullOrBlank() ){
+      intent.putExtra("tipoPinpad", tipoPinpad)    
+    }
+           
     if (tipoProcessamento == TipoProcessamento.ADM) {
+      Log.d("KOTLIN", "getIntent: ADM")
       intent.putExtra("modalidade", "110");
     }
     else{
-      intent.putExtra("operador", call.argument<String>("operador"))
-      intent.putExtra("data", call.argument<String>("data"))
-      intent.putExtra("hora", call.argument<String>("hora"))
-      intent.putExtra("numeroCupom", call.argument<String>("numeroCupom"))
-      intent.putExtra("numParcelas", "1")
+      intent.putExtra("data", getFormatedCurrentDate())
+      intent.putExtra("hora", getFormatedCurrentTime())
+
+      intent.putExtra("operador", call.argument<String>("operador"))      
+      intent.putExtra("numeroCupom", call.argument<String>("numeroCupom"))      
       intent.putExtra("valor", call.argument<String>("valor"))
 
       if (tipoProcessamento == TipoProcessamento.OUTROS) { 
+        Log.d("KOTLIN", "getIntent: OUTROS")
         intent.putExtra("modalidade", "0")
       }
     
       if (tipoProcessamento == TipoProcessamento.DEBITO) {
-        intent.putExtra("restricoes", "TransacoesHabilitadas=16")
+        Log.d("KOTLIN", "getIntent: DEBITO")
         intent.putExtra("modalidade", "2")
+        intent.putExtra("restricoes", "TransacoesHabilitadas=16")
       }
   
       if (tipoProcessamento == TipoProcessamento.CREDITO) {  
-        intent.putExtra("restricoes", "TransacoesHabilitadas=26")
+        Log.d("KOTLIN", "getIntent: CREDITO")
         intent.putExtra("modalidade", "3")
+        intent.putExtra("numParcelas", call.argument<String>("numParcelas"))
+        
+        when (tipoParcelamento) {
+          TipoParcelamento.NENHUM ->  intent.putExtra("restricoes", "TransacoesHabilitadas=26")
+          TipoParcelamento.LOJA -> intent.putExtra("restricoes", "TransacoesHabilitadas=27")
+          TipoParcelamento.ADM -> intent.putExtra("restricoes", "TransacoesHabilitadas=28")
+          else -> {}
+        }
       }
       
       if (tipoProcessamento == TipoProcessamento.PIX) {        
-        intent.putExtra("restricoes", "CarteirasDigitaisHabilitadas=027160110024");
-        intent.putExtra("transacoesHabilitadas", "7;8;");
+        Log.d("KOTLIN", "getIntent: PIX")
         intent.putExtra("modalidade", "122")
+        intent.putExtra("transacoesHabilitadas", "7;8;");
+        intent.putExtra("restricoes", "CarteirasDigitaisHabilitadas=027160110024");
+      }
+
+      if (tipoProcessamento == TipoProcessamento.CARTEIRA_DIGITAL) {        
+        Log.d("KOTLIN", "getIntent: PIX")
+        intent.putExtra("modalidade", "0")        
+        intent.putExtra("transacoesHabilitadas", "7;8;");
       }
     }
 
@@ -247,5 +296,25 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         in Int.MIN_VALUE..-101 -> "Erros detectados internamente pela rotina."
         else -> "Código de resposta desconhecido."
     }
-}
+  }
+
+  fun getFormatedCurrentDate(): String {
+    val now = LocalDate.now()
+
+    // Define o formato desejado
+    val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+    // Formata a data usando o formatter
+    return now.format(formatter)
+  }
+
+  fun getFormatedCurrentTime(): String {
+    val now = LocalTime.now()
+
+    // Define o formato desejado
+    val formatter = DateTimeFormatter.ofPattern("HHmmss")
+    // Formata a data usando o formatter
+    return now.format(formatter)
+  }
+
+
 }

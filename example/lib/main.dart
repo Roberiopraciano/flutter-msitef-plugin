@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
@@ -35,18 +33,18 @@ class _IntentFormState extends State<IntentForm> {
   final Map<String, TextEditingController> controllers = {
     "empresaSitef": TextEditingController(text: "00000001"),
     "enderecoSitef": TextEditingController(text: "127.0.0.1;127.0.0.1:20036"),
+    "CNPJ_CPF": TextEditingController(text: "86353381034"),
+    "cnpj_automacao": TextEditingController(text: "68884084000107"),
+    "comExterna": TextEditingController(text: "0"),
+    "otp": TextEditingController(text: ""),
+    "tokenRegistroTls": TextEditingController(text: ""),
+    "tipoPinpad": TextEditingController(text: ""),
     "operador": TextEditingController(text: "0001"),
-    "data": TextEditingController(text: "20140312"),
-    "hora": TextEditingController(text: "150000"),
     "numeroCupom": TextEditingController(text: "1"),
-    "numParcelas": TextEditingController(text: "3"),
-    "modalidade": TextEditingController(text: "0"),
     "valor": TextEditingController(text: "9000"),
-    "CNPJ_CPF": TextEditingController(text: "12345678912345"),
+    "tipoParcelamento": TextEditingController(text: "NENHUM"),
+    "numParcelas": TextEditingController(text: "1"),
     "timeoutColeta": TextEditingController(text: "30"),
-    "tokenRegistroTls": TextEditingController(text: "0000-0000-0000-0000"),
-    "comExterna": TextEditingController(text: "4"),
-    "otp": TextEditingController(text: "1234567"),
   };
 
   Map<String, String> getFormValues() {
@@ -87,6 +85,20 @@ class _IntentFormState extends State<IntentForm> {
         textColor: Colors.white,
       );
     }
+  }
+
+  String formatDate(DateTime date) {
+    // Formata o ano com quatro dígitos
+    String year = date.year.toString();
+
+    // Formata o mês com dois dígitos, adicionando um '0' à esquerda se necessário
+    String month = date.month.toString().padLeft(2, '0');
+
+    // Formata o dia com dois dígitos, adicionando um '0' à esquerda se necessário
+    String day = date.day.toString().padLeft(2, '0');
+
+    // Concatena ano, mês e dia no formato yyyyMMdd
+    return '$year$month$day';
   }
 
   void msitefVendaCredito() {
