@@ -28,6 +28,9 @@ For help getting started with Flutter development, view the
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+
+For help getting started with M-Sitef, see the [online documentation](https://dev.softwareexpress.com.br/docs/m-sitef/m-SiTef/#m-sitef), which provides tutorials, examples, and development and usage guidance.
+
 ## Functionalities
 
 - Communication with SiTef
