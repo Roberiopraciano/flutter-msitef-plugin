@@ -26,13 +26,103 @@ class MethodChannelFlutterMsitefPlugin extends FlutterMsitefPluginPlatform {
     required MSitefCallbackSuccess callback,
     MSitefCallbackFail? callbackFail,
   }) async {
-    print('msitefAdm called');
+    await msitefExecuteMethod(
+        method: 'msitef#adm',
+        params: params,
+        callback: callback,
+        callbackFail: callbackFail);
+  }
+
+  @override
+  Future<void> msitefCredito({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) async {
+    await msitefExecuteMethod(
+        method: 'msitef#credito',
+        params: params,
+        callback: callback,
+        callbackFail: callbackFail);
+  }
+
+  @override
+  Future<void> msitefDebito({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) async {
+    await msitefExecuteMethod(
+        method: 'msitef#credito',
+        params: params,
+        callback: callback,
+        callbackFail: callbackFail);
+  }
+
+  @override
+  Future<void> msitefPix({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) async {
+    await msitefExecuteMethod(
+        method: 'msitef#pix',
+        params: params,
+        callback: callback,
+        callbackFail: callbackFail);
+  }
+
+  @override
+  Future<void> msitefCarteiraDigital({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) async {
+    await msitefExecuteMethod(
+        method: 'msitef#carteiras',
+        params: params,
+        callback: callback,
+        callbackFail: callbackFail);
+  }
+
+  @override
+  Future<void> msitefCancelamento({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) async {
+    await msitefExecuteMethod(
+        method: 'msitef#cancelamento',
+        params: params,
+        callback: callback,
+        callbackFail: callbackFail);
+  }
+
+  @override
+  Future<void> msitefOutros({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) async {
+    await msitefExecuteMethod(
+        method: 'msitef#outros',
+        params: params,
+        callback: callback,
+        callbackFail: callbackFail);
+  }
+
+  Future<void> msitefExecuteMethod({
+    required String method,
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) async {
     setMsitefResultHandler();
 
     _callback = callback;
     _callbackFail = callbackFail;
 
-    await _methodChannel.invokeMethod('msitef#adm', params);
+    await _methodChannel.invokeMethod(method, params);
   }
 
   void setMsitefResultHandler() {
@@ -44,8 +134,10 @@ class MethodChannelFlutterMsitefPlugin extends FlutterMsitefPluginPlatform {
 
         final status = Map<String, dynamic>.from(call.arguments)['STATUS'];
 
-        if (status == 'RESPONSE_OK') {
-          print('RESPONSE_OK');
+        print(status);
+
+        if (status == 'RESULT_OK') {
+          print('RESULT_OK');
 
           final response =
               MSitefResponse.fromMap(Map<String, dynamic>.from(call.arguments));
@@ -54,7 +146,7 @@ class MethodChannelFlutterMsitefPlugin extends FlutterMsitefPluginPlatform {
             await _callback!(response);
           }
         } else {
-          print('RESPONSE_CANCELED/OTHERS');
+          print('RESULT_CANCELED/OTHERS');
 
           final response = MSitefResponseFail.fromMap(
               Map<String, dynamic>.from(call.arguments));

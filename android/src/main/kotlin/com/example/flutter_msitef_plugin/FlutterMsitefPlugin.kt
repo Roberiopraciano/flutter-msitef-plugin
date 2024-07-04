@@ -23,7 +23,8 @@ enum class TipoProcessamento {
   DEBITO,
   PIX,
   CARTEIRA_DIGITAL,
-  ADM
+  ADM,
+  CANCELAMENTO
 }
 
 enum class TipoParcelamento {
@@ -38,6 +39,26 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   private val REQUEST_CODE_MSITEF = 1234
   private val REQUEST_URL_MSITEF = "br.com.softwareexpress.sitef.msitef.ACTIVITY_CLISITEF"
 
+  override fun onDetachedFromActivity() {
+    Log.d("KOTLIN", "onDetachedFromActivity")
+    activity = null
+  }
+
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    Log.d("KOTLIN", "onReattachedToActivityForConfigChanges")
+    activity = binding.activity
+  }
+
+  override fun onDetachedFromActivityForConfigChanges() {
+    Log.d("KOTLIN", "onDetachedFromActivityForConfigChanges")
+    activity = null
+  }
+
+  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    channel.setMethodCallHandler(null)
+    Log.d("KOTLIN", "onDetachedFromEngine")
+  }
+
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_msitef_plugin")
     channel.setMethodCallHandler(this)
@@ -51,18 +72,24 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
       "msitef#getPlatformVersion" -> result.success("Android ${android.os.Build.VERSION.RELEASE}")
       
+      "msitef#adm" -> handleSitefAdm(call, result)
+
       "msitef#credito" -> handleSitefCredito(call, result)
 
-      "msitef#adm" -> handleSitefAdm(call, result)
+      "msitef#debito" -> handleSitefDebito(call, result)
+
+      "msitef#pix" -> handleSitefPix(call, result)
+
+      "msitef#carteiras" -> handleSitefCarteiraDigital(call, result)
+
+      "msitef#cancelamento" -> handleSitefCancelamento(call, result)
+
+      "msitef#outros" -> handleSitefOutros(call, result)
+
       
     else -> result.notImplemented()
     
     }
-  }
-
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-    Log.d("KOTLIN", "onDetachedFromEngine")
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
@@ -144,45 +171,58 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     }
   }
 
-  private fun handleSitefCredito(call: MethodCall, result: Result) {
-    Log.d("KOTLIN", "handleSitefCredito")
-    // val intent =  getIntent(TipoProcessamento.CREDITO, call)
-
-    // activity?.startActivityForResult(intent, REQUEST_CODE_MSITEF)
-
-    result.success(null)
-  }
-
-  private fun handleSitefAdm(call: MethodCall, result: Result) {
-    Log.d("KOTLIN", "handleSitefAdm")
-    val intent =  getIntent(TipoProcessamento.ADM, call)
+  private fun handleSitefActivity(tipoProcessamento: TipoProcessamento, call: MethodCall, result: Result) {
+    Log.d("KOTLIN", "handleSitefActivity")
+    val intent =  getIntent(tipoProcessamento, call)
     activity?.startActivityForResult(intent, REQUEST_CODE_MSITEF)
     result.success(null)
   }
 
-  override fun onDetachedFromActivity() {
-    Log.d("KOTLIN", "onDetachedFromActivity")
-    activity = null
+  private fun handleSitefAdm(call: MethodCall, result: Result) {
+    handleSitefActivity( TipoProcessamento.ADM, call, result );
   }
 
-  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-    Log.d("KOTLIN", "onReattachedToActivityForConfigChanges")
-    activity = binding.activity
+  private fun handleSitefCredito(call: MethodCall, result: Result) {
+    handleSitefActivity( TipoProcessamento.CREDITO, call, result );    
   }
 
-  override fun onDetachedFromActivityForConfigChanges() {
-    Log.d("KOTLIN", "onDetachedFromActivityForConfigChanges")
-    activity = null
+  private fun handleSitefDebito(call: MethodCall, result: Result) {
+    handleSitefActivity( TipoProcessamento.DEBITO, call, result );    
   }
 
+  private fun handleSitefPix(call: MethodCall, result: Result) {
+    handleSitefActivity( TipoProcessamento.PIX, call, result );    
+  }
 
+  private fun handleSitefCarteiraDigital(call: MethodCall, result: Result) {
+    handleSitefActivity( TipoProcessamento.CARTEIRA_DIGITAL, call, result );    
+  }
+
+  private fun handleSitefCancelamento(call: MethodCall, result: Result) {
+    handleSitefActivity( TipoProcessamento.CANCELAMENTO, call, result );    
+  }
+
+  private fun handleSitefOutros(call: MethodCall, result: Result) {
+    handleSitefActivity( TipoProcessamento.OUTROS, call, result );    
+  }
+  
   private fun getIntent(tipoProcessamento: TipoProcessamento, call: MethodCall): Intent? {    
 
     val intent = Intent(REQUEST_URL_MSITEF)
     val otp: String? = call.argument<String>("otp")
     val tokenRegistroTls: String? = call.argument<String>("tokenRegistroTls")
-    val tipoParcelamento: TipoParcelamento? = call.argument<TipoParcelamento>("tipoParcelamento")
     val tipoPinpad: String? = call.argument<String>("tipoPinpad")
+
+    var tipoParcelamento: TipoParcelamento = TipoParcelamento.NENHUM
+    val sTipoParcelamento: String? = (call.argument<String>("tipoParcelamento"))
+
+    if ( !sTipoParcelamento.isNullOrBlank() ){
+      try{
+        tipoParcelamento = TipoParcelamento.valueOf( sTipoParcelamento )
+      }
+      catch (e: IllegalArgumentException){
+      }
+    }
     
     intent.putExtra("empresaSitef", call.argument<String>("empresaSitef"))
     intent.putExtra("enderecoSitef", call.argument<String>("enderecoSitef"))
@@ -211,48 +251,54 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       intent.putExtra("modalidade", "110");
     }
     else{
-      intent.putExtra("data", getFormatedCurrentDate())
-      intent.putExtra("hora", getFormatedCurrentTime())
-
-      intent.putExtra("operador", call.argument<String>("operador"))      
-      intent.putExtra("numeroCupom", call.argument<String>("numeroCupom"))      
-      intent.putExtra("valor", call.argument<String>("valor"))
-
-      if (tipoProcessamento == TipoProcessamento.OUTROS) { 
-        Log.d("KOTLIN", "getIntent: OUTROS")
-        intent.putExtra("modalidade", "0")
+      if (tipoProcessamento == TipoProcessamento.CANCELAMENTO) {
+        Log.d("KOTLIN", "getIntent: CANCELAMENTO")
+        intent.putExtra("modalidade", "200");
       }
-    
-      if (tipoProcessamento == TipoProcessamento.DEBITO) {
-        Log.d("KOTLIN", "getIntent: DEBITO")
-        intent.putExtra("modalidade", "2")
-        intent.putExtra("restricoes", "TransacoesHabilitadas=16")
-      }
-  
-      if (tipoProcessamento == TipoProcessamento.CREDITO) {  
-        Log.d("KOTLIN", "getIntent: CREDITO")
-        intent.putExtra("modalidade", "3")
-        intent.putExtra("numParcelas", call.argument<String>("numParcelas"))
-        
-        when (tipoParcelamento) {
-          TipoParcelamento.NENHUM ->  intent.putExtra("restricoes", "TransacoesHabilitadas=26")
-          TipoParcelamento.LOJA -> intent.putExtra("restricoes", "TransacoesHabilitadas=27")
-          TipoParcelamento.ADM -> intent.putExtra("restricoes", "TransacoesHabilitadas=28")
-          else -> {}
+      else{
+        intent.putExtra("data", getFormatedCurrentDate())
+        intent.putExtra("hora", getFormatedCurrentTime())
+
+        intent.putExtra("operador", call.argument<String>("operador"))      
+        intent.putExtra("numeroCupom", call.argument<String>("numeroCupom"))      
+        intent.putExtra("valor", call.argument<String>("valor"))
+
+        if (tipoProcessamento == TipoProcessamento.OUTROS) { 
+          Log.d("KOTLIN", "getIntent: OUTROS")
+          intent.putExtra("modalidade", "0")
         }
-      }
       
-      if (tipoProcessamento == TipoProcessamento.PIX) {        
-        Log.d("KOTLIN", "getIntent: PIX")
-        intent.putExtra("modalidade", "122")
-        intent.putExtra("transacoesHabilitadas", "7;8;");
-        intent.putExtra("restricoes", "CarteirasDigitaisHabilitadas=027160110024");
-      }
+        if (tipoProcessamento == TipoProcessamento.DEBITO) {
+          Log.d("KOTLIN", "getIntent: DEBITO")
+          intent.putExtra("modalidade", "2")
+          intent.putExtra("restricoes", "TransacoesHabilitadas=16")
+        }
+    
+        if (tipoProcessamento == TipoProcessamento.CREDITO) {  
+          Log.d("KOTLIN", "getIntent: CREDITO")
+          intent.putExtra("modalidade", "3")
+          intent.putExtra("numParcelas", call.argument<String>("numParcelas"))
+          
+          when (tipoParcelamento) {
+            TipoParcelamento.NENHUM ->  intent.putExtra("restricoes", "TransacoesHabilitadas=26")
+            TipoParcelamento.LOJA -> intent.putExtra("restricoes", "TransacoesHabilitadas=27")
+            TipoParcelamento.ADM -> intent.putExtra("restricoes", "TransacoesHabilitadas=28")
+            else -> {}
+          }
+        }
+        
+        if (tipoProcessamento == TipoProcessamento.PIX) {        
+          Log.d("KOTLIN", "getIntent: PIX")
+          intent.putExtra("modalidade", "122")
+          intent.putExtra("transacoesHabilitadas", "7;8;");
+          intent.putExtra("restricoes", "CarteirasDigitaisHabilitadas=027160110024");
+        }
 
-      if (tipoProcessamento == TipoProcessamento.CARTEIRA_DIGITAL) {        
-        Log.d("KOTLIN", "getIntent: PIX")
-        intent.putExtra("modalidade", "0")        
-        intent.putExtra("transacoesHabilitadas", "7;8;");
+        if (tipoProcessamento == TipoProcessamento.CARTEIRA_DIGITAL) {        
+          Log.d("KOTLIN", "getIntent: PIX")
+          intent.putExtra("modalidade", "0")        
+          intent.putExtra("transacoesHabilitadas", "7;8;");
+        }
       }
     }
 

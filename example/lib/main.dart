@@ -31,9 +31,9 @@ class _IntentFormState extends State<IntentForm> {
   final _formKey = GlobalKey<FormState>();
 
   final Map<String, TextEditingController> controllers = {
-    "empresaSitef": TextEditingController(text: "00000001"),
-    "enderecoSitef": TextEditingController(text: "127.0.0.1;127.0.0.1:20036"),
-    "CNPJ_CPF": TextEditingController(text: "86353381034"),
+    "empresaSitef": TextEditingController(text: "00000000"),
+    "enderecoSitef": TextEditingController(text: "192.168.1.100"),
+    "CNPJ_CPF": TextEditingController(text: "00000000000000"),
     "cnpj_automacao": TextEditingController(text: "68884084000107"),
     "comExterna": TextEditingController(text: "0"),
     "otp": TextEditingController(text: ""),
@@ -87,42 +87,148 @@ class _IntentFormState extends State<IntentForm> {
     }
   }
 
-  String formatDate(DateTime date) {
-    // Formata o ano com quatro dígitos
-    String year = date.year.toString();
+  void msitefVendaCredito() async {
+    try {
+      final formData = getFormValues();
+      print("msitefCredito called with data: $formData");
 
-    // Formata o mês com dois dígitos, adicionando um '0' à esquerda se necessário
-    String month = date.month.toString().padLeft(2, '0');
+      await _flutterMsitefPlugin.msitefCredito(
+        params: formData,
+        callback: (MSitefResponse response) {
+          print("Resultado m-SiTef SUCCESS: $response");
+          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
+          return Future.value();
+        },
+        callbackFail: (MSitefResponseFail response) {
+          final message =
+              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
+          print(message);
 
-    // Formata o dia com dois dígitos, adicionando um '0' à esquerda se necessário
-    String day = date.day.toString().padLeft(2, '0');
+          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
+          showToast(message);
 
-    // Concatena ano, mês e dia no formato yyyyMMdd
-    return '$year$month$day';
+          return Future.value();
+        },
+      );
+
+      // Perform necessary actions with the form data
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Erro ao executar msitefCredito: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
   }
 
-  void msitefVendaCredito() {
-    final formData = getFormValues();
-    print("msitefVendaCredito called with data: $formData");
-    // Perform necessary actions with the form data
+  void msitefVendaDebito() async {
+    try {
+      final formData = getFormValues();
+      print("msitefCredito called with data: $formData");
+
+      await _flutterMsitefPlugin.msitefDebito(
+        params: formData,
+        callback: (MSitefResponse response) {
+          print("Resultado m-SiTef SUCCESS: $response");
+          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
+          return Future.value();
+        },
+        callbackFail: (MSitefResponseFail response) {
+          final message =
+              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
+          print(message);
+
+          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
+          showToast(message);
+
+          return Future.value();
+        },
+      );
+
+      // Perform necessary actions with the form data
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Erro ao executar msitefDebito: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
   }
 
-  void msitefVendaDebito() {
-    final formData = getFormValues();
-    print("msitefVendaDebito called with data: $formData");
-    // Perform necessary actions with the form data
+  void msitefPix() async {
+    try {
+      final formData = getFormValues();
+      print("msitefCredito called with data: $formData");
+
+      await _flutterMsitefPlugin.msitefPix(
+        params: formData,
+        callback: (MSitefResponse response) {
+          print("Resultado m-SiTef SUCCESS: $response");
+          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
+          return Future.value();
+        },
+        callbackFail: (MSitefResponseFail response) {
+          final message =
+              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
+          print(message);
+
+          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
+          showToast(message);
+
+          return Future.value();
+        },
+      );
+
+      // Perform necessary actions with the form data
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Erro ao executar msitefPix: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
   }
 
-  void msitefPix() {
-    final formData = getFormValues();
-    print("msitefPix called with data: $formData");
-    // Perform necessary actions with the form data
-  }
+  void msitefCancel() async {
+    try {
+      final formData = getFormValues();
+      print("msitefCredito called with data: $formData");
 
-  void msitefCancel() {
-    final formData = getFormValues();
-    print("msitefCancel called with data: $formData");
-    // Perform necessary actions with the form data
+      await _flutterMsitefPlugin.msitefCancelamento(
+        params: formData,
+        callback: (MSitefResponse response) {
+          print("Resultado m-SiTef SUCCESS: $response");
+          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
+          return Future.value();
+        },
+        callbackFail: (MSitefResponseFail response) {
+          final message =
+              "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
+          print(message);
+
+          // Aqui você pode atualizar seu UI ou lidar com o resultado conforme necessário
+          showToast(message);
+
+          return Future.value();
+        },
+      );
+
+      // Perform necessary actions with the form data
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Erro ao executar msitefCancelamento: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
   }
 
   void showToast(String message) {

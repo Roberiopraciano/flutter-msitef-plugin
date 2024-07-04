@@ -40,4 +40,53 @@ abstract class FlutterMsitefPluginPlatform extends PlatformInterface {
   }) {
     throw UnimplementedError('msitefAdm() has not been implemented.');
   }
+
+  Future<void> msitefCredito({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) {
+    throw UnimplementedError('msitefCredito() has not been implemented.');
+  }
+
+  Future<void> msitefDebito({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) {
+    throw UnimplementedError('msitefDebito() has not been implemented.');
+  }
+
+  Future<void> msitefPix({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) {
+    throw UnimplementedError('msitefPix() has not been implemented.');
+  }
+
+  Future<void> msitefCarteiraDigital({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) {
+    throw UnimplementedError(
+        'msitefCarteiraDigital() has not been implemented.');
+  }
+
+  Future<void> msitefCancelamento({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) {
+    throw UnimplementedError('msitefCancelamento() has not been implemented.');
+  }
+
+  Future<void> msitefOutros({
+    required Map<String, String> params,
+    required MSitefCallbackSuccess callback,
+    MSitefCallbackFail? callbackFail,
+  }) {
+    throw UnimplementedError('msitefOutros() has not been implemented.');
+  }
 }
