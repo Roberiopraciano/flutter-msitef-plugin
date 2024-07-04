@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/unisystemdev/flutter-msitef-plugin/blob/main/LICENSE)
 
 This project is a starting point for a Flutter plugin package, a specialized package
-that includes implementation code specific to Android and/or iOS platforms.
+that includes implementation code specific to Android.
 This plugin demonstrates communication with SiTef (Electronic Funds Transfer System).
 
 ## Table of Contents
