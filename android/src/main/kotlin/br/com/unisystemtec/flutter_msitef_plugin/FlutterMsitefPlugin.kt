@@ -1,4 +1,4 @@
-package com.example.flutter_msitef_plugin
+package br.com.unisystemtec.flutter_msitef_plugin
 
 import android.app.Activity
 import android.content.Intent

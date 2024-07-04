@@ -35,7 +35,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.flutter_msitef_plugin
+        package: br.com.unisystemtec.flutter_msitef_plugin
         pluginClass: FlutterMsitefPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
