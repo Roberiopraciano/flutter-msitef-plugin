@@ -4,21 +4,24 @@ import 'dart:async';
 
 import 'package:flutter_msitef_plugin/flutter_msitef_plugin.dart';
 
+// Função principal do aplicativo Flutter
 void main() {
   runApp(const MyApp());
 }
 
+// Definição da classe principal do aplicativo Flutter
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: IntentForm(),
+      home: IntentForm(), // Define a tela inicial do aplicativo
     );
   }
 }
 
+// Definição do widget de formulário
 class IntentForm extends StatefulWidget {
   const IntentForm({super.key});
 
@@ -27,12 +30,13 @@ class IntentForm extends StatefulWidget {
 }
 
 class _IntentFormState extends State<IntentForm> {
-  final _flutterMsitefPlugin = FlutterMsitefPlugin();
-  final _formKey = GlobalKey<FormState>();
+  final _flutterMsitefPlugin = FlutterMsitefPlugin(); // Instância do plugin
+  final _formKey = GlobalKey<FormState>(); // Chave para o formulário
 
   String tipoPinpad = "";
   String tipoParcelamento = "NENHUM";
 
+  // Controladores de texto para os campos do formulário
   final Map<String, TextEditingController> controllers = {
     "empresaSitef": TextEditingController(text: "00000000"),
     "enderecoSitef": TextEditingController(text: "192.168.1.100"),
@@ -48,6 +52,7 @@ class _IntentFormState extends State<IntentForm> {
     "timeoutColeta": TextEditingController(text: "30"),
   };
 
+  // Função para obter os valores do formulário
   Map<String, String> getFormValues() {
     final formValues =
         controllers.map((key, controller) => MapEntry(key, controller.text));
@@ -56,6 +61,7 @@ class _IntentFormState extends State<IntentForm> {
     return formValues;
   }
 
+  // Função de callback de sucesso para o m-SiTef
   Future<void> msitefSuccess(MSitefResponse response) {
     final String message = 'CODRESP: ${response.codresp} \n\n'
         'CODTRANS: ${response.codtrans} \n\n'
@@ -71,6 +77,7 @@ class _IntentFormState extends State<IntentForm> {
     return Future.value();
   }
 
+  // Função de callback de falha para o m-SiTef
   Future<void> msitefFail(MSitefResponseFail response) {
     final message =
         "Resultado m-SiTef FAIL: ${response.codresp} - ${response.message} ";
@@ -79,6 +86,7 @@ class _IntentFormState extends State<IntentForm> {
     return Future.value();
   }
 
+  // Função para iniciar uma transação administrativa no m-SiTef
   void msitefAdm() async {
     final formData = getFormValues();
     await _flutterMsitefPlugin.msitefAdm(
@@ -88,6 +96,7 @@ class _IntentFormState extends State<IntentForm> {
     );
   }
 
+  // Função para iniciar uma venda de crédito no m-SiTef
   void msitefVendaCredito() async {
     final formData = getFormValues();
     await _flutterMsitefPlugin.msitefCredito(
@@ -97,6 +106,7 @@ class _IntentFormState extends State<IntentForm> {
     );
   }
 
+  // Função para iniciar uma venda de débito no m-SiTef
   void msitefVendaDebito() async {
     final formData = getFormValues();
     await _flutterMsitefPlugin.msitefDebito(
@@ -106,6 +116,7 @@ class _IntentFormState extends State<IntentForm> {
     );
   }
 
+  // Função para iniciar um pagamento via Pix no m-SiTef
   void msitefPix() async {
     final formData = getFormValues();
     await _flutterMsitefPlugin.msitefPix(
@@ -115,6 +126,7 @@ class _IntentFormState extends State<IntentForm> {
     );
   }
 
+  // Função para cancelar uma transação no m-SiTef
   void msitefCancel() async {
     final formData = getFormValues();
     await _flutterMsitefPlugin.msitefCancelamento(
@@ -124,6 +136,7 @@ class _IntentFormState extends State<IntentForm> {
     );
   }
 
+  // Função para executar ações com tratamento de exceções
   void executeWithExceptionHandling(Function action) {
     try {
       action();
@@ -132,6 +145,7 @@ class _IntentFormState extends State<IntentForm> {
     }
   }
 
+  // Função para exibir toasts
   void showToast(String tipo, String message) {
     Color backgroundColor;
     ToastGravity gravity;
@@ -244,7 +258,7 @@ class _IntentFormState extends State<IntentForm> {
   @override
   void dispose() {
     controllers.forEach((key, controller) {
-      controller.dispose();
+      controller.dispose(); // Libera os recursos dos controladores de texto
     });
     super.dispose();
   }

@@ -13,13 +13,17 @@ import 'package:integration_test/integration_test.dart';
 import 'package:flutter_msitef_plugin/flutter_msitef_plugin.dart';
 
 void main() {
+  // Inicializa o binding para testes de integração
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  // Define um teste de widgets
   testWidgets('getPlatformVersion test', (WidgetTester tester) async {
+    // Cria uma instância do plugin FlutterMsitefPlugin
     final FlutterMsitefPlugin plugin = FlutterMsitefPlugin();
+    // Chama o método getPlatformVersion do plugin e aguarda o resultado
     final String? version = await plugin.getPlatformVersion();
-    // The version string depends on the host platform running the test, so
-    // just assert that some non-empty string is returned.
+    // A string de versão depende da plataforma host que está executando o teste,
+    // então apenas verifica se alguma string não vazia é retornada.
     expect(version?.isNotEmpty, true);
   });
 }
