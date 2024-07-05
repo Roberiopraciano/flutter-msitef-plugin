@@ -1,5 +1,7 @@
 name: flutter_msitef_plugin
-description: "A new Flutter plugin project."
+description: "This project is a starting point for a Flutter plugin package, a specialized package
+that includes implementation code specific to Android.
+This plugin demonstrates communication with msiTef"
 version: 0.0.1
 homepage: "https://github.com/unisystemdev/flutter-msitef-plugin"
 
