@@ -1,5 +1,6 @@
 package br.com.unisystemtec.flutter_msitef_plugin
 
+import android.os.Build
 import android.app.Activity
 import android.content.Intent
 import androidx.annotation.NonNull
@@ -16,6 +17,9 @@ import android.util.Log
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.text.SimpleDateFormat
+
 
 enum class TipoProcessamento {
   OUTROS,
@@ -345,22 +349,33 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   }
 
   fun getFormatedCurrentDate(): String {
-    val now = LocalDate.now()
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val now = LocalDate.now()
 
-    // Define o formato desejado
-    val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-    // Formata a data usando o formatter
-    return now.format(formatter)
-  }
+        // Define o formato desejado
+        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+        // Formata a data usando o formatter
+        now.format(formatter)
+    } else {
+        // Usar SimpleDateFormat para versões anteriores ao Android O
+        val formatter = SimpleDateFormat("yyyyMMdd")
+        formatter.format(Date())
+    }
+  } 
 
   fun getFormatedCurrentTime(): String {
-    val now = LocalTime.now()
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      val now = LocalTime.now()
 
-    // Define o formato desejado
-    val formatter = DateTimeFormatter.ofPattern("HHmmss")
-    // Formata a data usando o formatter
-    return now.format(formatter)
+      // Define o formato desejado
+      val formatter = DateTimeFormatter.ofPattern("HHmmss")
+      // Formata a data usando o formatter
+      now.format(formatter)
+    } else {
+      // Usar SimpleDateFormat para versões anteriores ao Android O
+      val formatter = SimpleDateFormat("HHmmss")
+      formatter.format(Date())
+    }
   }
-
-
+  
 }
