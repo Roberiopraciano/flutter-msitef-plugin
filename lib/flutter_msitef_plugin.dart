@@ -1,7 +1,7 @@
-export '../src/msitef_response.dart';
-export '../src/msitef_response_fail.dart';
+import 'package:flutter_msitef_plugin/flutter_msitef_plugin_platform_interface.dart';
+import 'package:flutter_msitef_plugin/src/msitef_response.dart';
+import 'package:flutter_msitef_plugin/src/msitef_response_fail.dart';
 
-import 'flutter_msitef_plugin_platform_interface.dart';
 
 class FlutterMsitefPlugin {
   Future<String?> getPlatformVersion() {
@@ -15,6 +15,7 @@ class FlutterMsitefPlugin {
   }) async {
     await FlutterMsitefPluginPlatform.instance.msitefAdm(
         params: params, callback: callback, callbackFail: callbackFail);
+    return; // CORREÇÃO APLICADA
   }
 
   Future<void> msitefCredito({
@@ -24,6 +25,7 @@ class FlutterMsitefPlugin {
   }) async {
     await FlutterMsitefPluginPlatform.instance.msitefCredito(
         params: params, callback: callback, callbackFail: callbackFail);
+    return; // CORREÇÃO APLICADA
   }
 
   Future<void> msitefDebito({
@@ -33,6 +35,7 @@ class FlutterMsitefPlugin {
   }) async {
     await FlutterMsitefPluginPlatform.instance.msitefDebito(
         params: params, callback: callback, callbackFail: callbackFail);
+    return; // CORREÇÃO APLICADA
   }
 
   Future<void> msitefPix({
@@ -42,6 +45,7 @@ class FlutterMsitefPlugin {
   }) async {
     await FlutterMsitefPluginPlatform.instance.msitefPix(
         params: params, callback: callback, callbackFail: callbackFail);
+    return; // CORREÇÃO APLICADA
   }
 
   Future<void> msitefCarteiraDigital({
@@ -51,6 +55,7 @@ class FlutterMsitefPlugin {
   }) async {
     await FlutterMsitefPluginPlatform.instance.msitefCarteiraDigital(
         params: params, callback: callback, callbackFail: callbackFail);
+    return; // CORREÇÃO APLICADA
   }
 
   Future<void> msitefCancelamento({
@@ -60,6 +65,7 @@ class FlutterMsitefPlugin {
   }) async {
     await FlutterMsitefPluginPlatform.instance.msitefCancelamento(
         params: params, callback: callback, callbackFail: callbackFail);
+    return; // CORREÇÃO APLICADA
   }
 
   Future<void> msitefOutros({
@@ -69,5 +75,6 @@ class FlutterMsitefPlugin {
   }) async {
     await FlutterMsitefPluginPlatform.instance.msitefOutros(
         params: params, callback: callback, callbackFail: callbackFail);
+    return; // CORREÇÃO APLICADA
   }
 }
