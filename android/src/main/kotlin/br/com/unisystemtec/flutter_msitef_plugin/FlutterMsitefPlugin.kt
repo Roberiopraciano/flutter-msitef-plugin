@@ -274,6 +274,8 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       
         if (tipoProcessamento == TipoProcessamento.DEBITO) {
           Log.d("KOTLIN", "getIntent: DEBITO")
+          Log.d("KOTLIN","modalidade 2")
+          Log.d("KOTLIN","restricoes TransacoesHabilitadas=16")
           intent.putExtra("modalidade", "2")
           intent.putExtra("restricoes", "TransacoesHabilitadas=16")
         }
