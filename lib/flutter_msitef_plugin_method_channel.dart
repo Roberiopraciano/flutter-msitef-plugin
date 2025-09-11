@@ -53,7 +53,7 @@ class MethodChannelFlutterMsitefPlugin extends FlutterMsitefPluginPlatform {
     MSitefCallbackFail? callbackFail,
   }) async {
     await msitefExecuteMethod(
-        method: 'msitef#credito',
+        method: 'msitef#debito',
         params: params,
         callback: callback,
         callbackFail: callbackFail);
