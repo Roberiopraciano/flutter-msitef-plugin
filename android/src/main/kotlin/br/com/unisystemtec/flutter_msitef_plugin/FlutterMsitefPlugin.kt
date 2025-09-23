@@ -217,8 +217,9 @@ class FlutterMsitefPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     val tokenRegistroTls: String? = call.argument<String>("tokenRegistroTls")
     val tipoPinpad: String? = call.argument<String>("tipoPinpad")
 
+
     Log.d("KOTLIN", "tipoPinpad: $tipoPinpad");
-    Log.d("KOTLIN", "otp: $otp");
+    Log.d("KOTLIN", "otp:  $otp");
     Log.d("KOTLIN", "tokenRegistroTls: $tokenRegistroTls");
 
 
